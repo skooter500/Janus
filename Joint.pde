@@ -29,7 +29,7 @@ class Joint
   }
    
   
-  void sendMesage(float value)
+  void track(float value)
   {
     float temp = norm(value, trackLow, trackHigh);
     if (temp < 0)
@@ -38,9 +38,9 @@ class Joint
     }
     if (temp > 1)
     {
-      value = trackLow;
+      value = trackHigh;
     }
-    cp5.getController(id).setValue(map(value, inputLow, inputHigh, servoLow, servoHigh));       
+    cp5.getController(id).setValue(map(value, trackLow, trackHigh, servoLow, servoHigh));       
   }
   
   

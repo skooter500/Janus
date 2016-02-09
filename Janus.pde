@@ -18,17 +18,17 @@ void setup() {
   size(500,500);
   arduino = new Serial(this, Serial.list()[0], 9600);
   
-  joints.put("G", new Joint("G", 0, 60, 0));
-  joints.put("W", new Joint("W", 17, 185));
-  joints.put("E", new Joint("E", 20, 160
-  joints.put("S", new Joint("S", 10, 180
-  joints.put("B", new Joint("B", 10, 180
+  joints.put("G", new Joint("G", 0, 60, 0, 7, 125, 60, 0));
+  joints.put("W", new Joint("W", 17, 185, 0, .32, -2.49, 17, 185));
+  joints.put("E", new Joint("E", 20, 160, 0, -1.9, -1.19, 20, 40));
+  joints.put("S", new Joint("S", 10, 180, 60, 180, 300, 126, 64));
+  joints.put("B", new Joint("B", 10, 180, 100, -150, 150, 180, 10));
   cp5 = new ControlP5(this);  
   int i = 0;
-  for (String key: map.keySet())
+  for (String key: joints.keySet())
   {
-    Joint j = map.get(key);
-    cp5.addSlider(j.id, j.idle, j.inputLow, j.inputHigh, 10, 10 + (50 * i), 470, 40);
+    Joint j = joints.get(key);
+    cp5.addSlider(j.id, j.idle, j.inputLow, j.inputHigh, 10, 10 + (50 * (i ++)), 470, 40);
   }
   
   /*cp5.addSlider("G", 0, 60, 0, 10, 10, 470, 40); 
@@ -129,11 +129,18 @@ void draw()
      {
        getHandInfo(frame);
        float thumbIndexGap = PVector.dist(thumbPos, indexPos);
-       cp5.getController("G").setValue(map(thumbIndexGap, 7, 125, 60, 0));
-       cp5.getController("W").setValue(map(clampRange(roll, .32, -2.49), .32, -2.49, 17, 185));
-       cp5.getController("B").setValue(map(palmPos.x, -150, 150, 180, 10));
-       cp5.getController("S").setValue(map(palmPos.y, 80, 260, 126, 64));
-       cp5.getController("E").setValue(map(pitch, -1.9, -1.19, 20, 40));
+       
+       joints.get("G").track(thumbIndexGap);
+       joints.get("W").track(roll);
+       joints.get("B").track(palmPos.x);
+       joints.get("S").track(palmPos.y);
+       joints.get("E").track(pitch);
+       
+       //cp5.getController("G").setValue(map(thumbIndexGap, 7, 125, 60, 0));
+       //cp5.getController("W").setValue(map(roll, .32, -2.49, 17, 185));
+       //cp5.getController("B").setValue(map(palmPos.x, -150, 150, 180, 10));
+       //cp5.getController("S").setValue(map(palmPos.y, 80, 260, 126, 64));
+       //cp5.getController("E").setValue(map(pitch, -1.9, -1.19, 20, 40));
        //-2 -0.5
        
        handDir.mult(100);
