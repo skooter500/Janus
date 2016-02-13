@@ -11,6 +11,8 @@ Serial arduino;
 
 LeapMotion leap;
 
+float[] ypr = new float[3];
+
 Camera camera;
 HashMap<String, Joint> joints = new HashMap<String, Joint>();
 
@@ -19,10 +21,14 @@ void setup() {
   arduino = new Serial(this, Serial.list()[0], 9600);
   
   joints.put("G", new Joint("G", 0, 60, 0, 7, 125, 60, 0));
-  joints.put("W", new Joint("W", 17, 185, 0, .32, -2.49, 17, 185));
-  joints.put("E", new Joint("E", 20, 160, 0, -1.9, -1.19, 20, 40));
-  joints.put("S", new Joint("S", 10, 180, 60, 180, 300, 126, 64));
+  joints.put("W", new Joint("W", 17, 185, 110, 1.0f, -1.0f, 17, 185));
+  
+  
+  joints.put("E", new Joint("E", 0, 180, 60, 180, 300, 50, 100));  
+  joints.put("S", new Joint("S", 0, 180, 60, 180, 300, 152, 94));
+  
   joints.put("B", new Joint("B", 10, 180, 100, -150, 150, 180, 10));
+  joints.put("X", new Joint("X", 0, 150, 90, -1.5f, 0.4f, 50, 150));
   cp5 = new ControlP5(this);  
   int i = 0;
   for (String key: joints.keySet())
@@ -31,12 +37,6 @@ void setup() {
     cp5.addSlider(j.id, j.idle, j.inputLow, j.inputHigh, 10, 10 + (50 * (i ++)), 470, 40);
   }
   
-  /*cp5.addSlider("G", 0, 60, 0, 10, 10, 470, 40); 
-  cp5.addSlider("W", 17, 185, 0, 10, 60, 450, 40); 
-  cp5.addSlider("E", 20, 160, 0, 10, 110, 450, 40); 
-  cp5.addSlider("S", 10, 180, 60, 10, 160, 255, 40); 
-  cp5.addSlider("B", 10, 180, 100, 10, 210, 255, 40); 
-*/
   leap = new LeapMotion(this);
   
   camera = new Camera();
@@ -47,16 +47,12 @@ PVector indexPos = new PVector();
 PVector handDir = new PVector();
 PVector palmPos = new PVector();
 
-float pitch = 0.0f;
-float roll = 0.0f;
+float pinchStrength = 0;
 
 void getHandInfo(Frame frame)
 {
   Hand hand = frame.hands().rightmost();
-  
-  roll = hand.palmNormal().roll();
-  pitch = hand.palmNormal().pitch();
-  
+  pinchStrength = hand.pinchStrength();
   
   for (Finger finger : hand.fingers())
   {    
@@ -83,10 +79,27 @@ void getHandInfo(Frame frame)
     palmPos.x = palmP.getX();
     palmPos.y = palmP.getY();
     palmPos.z = palmP.getZ();
+    
+    ypr[0] = hand.direction().yaw();;
+    ypr[1] = hand.direction().pitch();
+    ypr[2] = hand.palmNormal().roll();
   }
 }
 
-
+void drawDirections(float[] directions)
+{  
+  float gap = (float) width / (float) (directions.length + 1);
+  for (int i = 0 ; i < directions.length ; i ++)
+  {
+    float x = (i + 1) * gap;
+    float y = 400;
+    pushMatrix();
+    translate(x, y);
+    rotate(directions[i]);
+    line(0, 0, 0, -40);
+    popMatrix();
+  }
+}
 
 void draw()
 {
@@ -131,10 +144,10 @@ void draw()
        float thumbIndexGap = PVector.dist(thumbPos, indexPos);
        
        joints.get("G").track(thumbIndexGap);
-       joints.get("W").track(roll);
+       joints.get("W").track(ypr[2]);
        joints.get("B").track(palmPos.x);
        joints.get("S").track(palmPos.y);
-       joints.get("E").track(pitch);
+       joints.get("X").track(ypr[1]);
        
        //cp5.getController("G").setValue(map(thumbIndexGap, 7, 125, 60, 0));
        //cp5.getController("W").setValue(map(roll, .32, -2.49, 17, 185));
@@ -151,8 +164,8 @@ void draw()
        sphere(5);
        popMatrix();
      }
-     
-     println(pitch);
+      println(pinchStrength);     
+     drawDirections(ypr);
    }
    
   if (arduino.available() > 0)
