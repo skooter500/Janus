@@ -6,7 +6,6 @@ import controlP5.*;
 import processing.serial.*;
  
 ControlP5 cp5;
- 
 Serial arduino;
 
 LeapMotion leap;
@@ -20,12 +19,12 @@ void setup() {
   size(500,500);
   arduino = new Serial(this, Serial.list()[0], 9600);
   
-  joints.put("G", new Joint("G", 0, 60, 0, 7, 125, 60, 0));
+  joints.put("G", new Joint("G", 0, 60, 0, 1, 0, 60, 0));
   joints.put("W", new Joint("W", 17, 185, 110, 1.0f, -1.0f, 17, 185));
   
   
-  joints.put("E", new Joint("E", 0, 180, 60, 180, 300, 50, 100));  
-  joints.put("S", new Joint("S", 0, 180, 60, 180, 300, 152, 94));
+  joints.put("E", new Joint("E", 20, 120, 60, 150, 500, 40, 120));  
+  joints.put("S", new Joint("S", 0, 130, 80, 130, -50, 80, 130));
   
   joints.put("B", new Joint("B", 10, 180, 100, -150, 150, 180, 10));
   joints.put("X", new Joint("X", 0, 150, 90, -1.5f, 0.4f, 50, 150));
@@ -96,7 +95,11 @@ void drawDirections(float[] directions)
     pushMatrix();
     translate(x, y);
     rotate(directions[i]);
+    stroke(0, 255, 255);
     line(0, 0, 0, -40);
+    line(-5, -30, 0, -40);
+    line(+5, -30, 0, -40);
+    ellipse(0, 0, 80, 80);
     popMatrix();
   }
 }
@@ -143,10 +146,11 @@ void draw()
        getHandInfo(frame);
        float thumbIndexGap = PVector.dist(thumbPos, indexPos);
        
-       joints.get("G").track(thumbIndexGap);
+       joints.get("G").track(pinchStrength);
        joints.get("W").track(ypr[2]);
        joints.get("B").track(palmPos.x);
-       joints.get("S").track(palmPos.y);
+       joints.get("S").track(palmPos.z);
+       joints.get("E").track(palmPos.y);
        joints.get("X").track(ypr[1]);
        
        //cp5.getController("G").setValue(map(thumbIndexGap, 7, 125, 60, 0));
@@ -164,7 +168,7 @@ void draw()
        sphere(5);
        popMatrix();
      }
-      println(pinchStrength);     
+     println(palmPos.z);     
      drawDirections(ypr);
    }
    

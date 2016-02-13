@@ -28,9 +28,10 @@ void setup() {
   elbow.write(100); 
 
   shoulder1.attach(9);
-  shoulder1.write(100); 
+  shoulder1.write(110); 
 
   base.attach(10);
+  base.write(138);
 
 }
 
