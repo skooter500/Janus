@@ -19,14 +19,16 @@ void setup() {
   grip.write(0); 
                                                                                          
   wristZ.attach(5);
-  wristZ.write(17); 
+  wristZ.write(110); 
+
+  wristX.attach(11);
+  wristX.write(90);
   
+  elbow.attach(6);
+  elbow.write(100); 
 
-  elbow.attach(9);
-  elbow.write(20); 
-
-  shoulder1.attach(6);
-  shoulder1.write(60); 
+  shoulder1.attach(9);
+  shoulder1.write(100); 
 
   base.attach(10);
 
@@ -46,6 +48,12 @@ void loop() {
       float angle = Serial.parseFloat();
       wristZ.write(angle);
     }
+    if (c == 'X')
+    {
+      float angle = Serial.parseFloat();
+      wristX.write(angle);
+    }
+
     if (c == 'E')
     {
       float angle = Serial.parseFloat();
