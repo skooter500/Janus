@@ -59,7 +59,7 @@ void setup() {
                                                                                          
   wristZ.attach(5);
   wristZ.write(110); 
-
+  
   wristX.attach(11);
   wristX.write(90);
   
@@ -111,6 +111,9 @@ void loop() {
     if (c == 'R')
     {
       base.write(baseDefault);
+      wristZ.write(110); 
+      wristX.write(90);
+  
       //resetBase();
     }
   }

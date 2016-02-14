@@ -16,7 +16,7 @@ Camera camera;
 HashMap<String, Joint> joints = new HashMap<String, Joint>();
 
 void setup() {
-  size(500,500);
+  size(600,600);
   arduino = new Serial(this, Serial.list()[0], 9600);
   
   joints.put("G", new Joint("G", 0, 60, 0, 1, 0, 60, 0));
@@ -32,8 +32,8 @@ void setup() {
   int i = 0;
   for (String key: joints.keySet())
   {
-    Joint j = joints.get(key);
-    cp5.addSlider(j.id, j.idle, j.inputLow, j.inputHigh, 10, 10 + (50 * (i ++)), 470, 40);
+    Joint j = joints.get(key);    
+    cp5.addSlider(j.id, j.idle, j.inputLow, j.inputHigh, 10, 10 + (50 * (i ++)), width - 50, 40);
   }
   
   leap = new LeapMotion(this);
@@ -95,11 +95,13 @@ void drawDirections(float[] directions)
     pushMatrix();
     translate(x, y);
     rotate(directions[i]);
-    stroke(0, 255, 255);
-    line(0, 0, 0, -40);
-    line(-5, -30, 0, -40);
-    line(+5, -30, 0, -40);
-    ellipse(0, 0, 80, 80);
+    strokeWeight(2);
+    stroke(255, 255, 255);            
+    line(0, 0, 0, -36);
+    line(-5, -28, 0, -36);
+    line(+5, -28, 0, -36);
+    stroke(0, 116, 217);        
+    ellipse(0, 0, 80, 80);    
     popMatrix();
   }
 }
@@ -134,7 +136,10 @@ void draw()
      {              
        tracked = true;
        float x = leap.leapToSketchX(finger.tipPosition().getX());
-       float y = leap.leapToSketchY(finger.tipPosition().getY());     
+       float y = leap.leapToSketchY(finger.tipPosition().getY()) + 50;     
+      
+       stroke(0, 116, 217);        
+
        ellipse(
          x
          ,y
