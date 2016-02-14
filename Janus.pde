@@ -104,6 +104,14 @@ void drawDirections(float[] directions)
   }
 }
 
+boolean needsReset = true;
+
+void stop()
+{
+  arduino.write("R");
+  super.stop();
+}
+
 void draw()
 {
   background(0);
@@ -127,48 +135,44 @@ void draw()
        tracked = true;
        float x = leap.leapToSketchX(finger.tipPosition().getX());
        float y = leap.leapToSketchY(finger.tipPosition().getY());     
-       if (thumbX == Float.MAX_VALUE && indexX == Float.MAX_VALUE)
-       {
-         thumbX = x;
-       }
-       else if (indexX == Float.MAX_VALUE)
-       {
-         indexX = x;
-       }
        ellipse(
          x
          ,y
          , 10, 10
-         );
+         );                
      }
+     
      if (tracked)
      {
-       getHandInfo(frame);
-       float thumbIndexGap = PVector.dist(thumbPos, indexPos);
-       
-       joints.get("G").track(pinchStrength);
-       joints.get("W").track(ypr[2]);
-       joints.get("B").track(palmPos.x);
-       joints.get("S").track(palmPos.z);
-       joints.get("E").track(palmPos.y);
-       joints.get("X").track(ypr[1]);
-       
-       //cp5.getController("G").setValue(map(thumbIndexGap, 7, 125, 60, 0));
-       //cp5.getController("W").setValue(map(roll, .32, -2.49, 17, 185));
-       //cp5.getController("B").setValue(map(palmPos.x, -150, 150, 180, 10));
-       //cp5.getController("S").setValue(map(palmPos.y, 80, 260, 126, 64));
-       //cp5.getController("E").setValue(map(pitch, -1.9, -1.19, 20, 40));
-       //-2 -0.5
-       
-       handDir.mult(100);
-       line(0, 0, 0, handDir.x, handDir.y, handDir.z); 
-       //println(indexPos);       
-       pushMatrix();
-       translate(thumbPos.x, thumbPos.y, thumbPos.z);
-       sphere(5);
-       popMatrix();
+        needsReset = true;
+        getHandInfo(frame);
+        float thumbIndexGap = PVector.dist(thumbPos, indexPos);
+        
+        joints.get("G").track(pinchStrength);
+        joints.get("W").track(ypr[2]);
+        joints.get("B").track(palmPos.x);
+        joints.get("S").track(palmPos.z);
+        joints.get("E").track(palmPos.y);
+        joints.get("X").track(ypr[1]);               
+        
+        /*handDir.mult(100);
+        line(0, 0, 0, handDir.x, handDir.y, handDir.z); 
+        pushMatrix();
+        translate(thumbPos.x, thumbPos.y, thumbPos.z);
+        sphere(5);
+        popMatrix();
+        */
      }
-     println(palmPos.z);     
+     
+     if (! tracked && needsReset)
+     {       
+       if (needsReset)
+       {
+         arduino.write("R");
+         needsReset = false;
+       }
+     }
+     
      drawDirections(ypr);
    }
    

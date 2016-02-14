@@ -11,6 +11,45 @@ Servo base;  // create servo object to control a servo
 
 int pos = 0;    // variable to store the servo position
 
+float aspeed = 10.0f;
+float baseDefault = 100.0f;
+
+long previous = 0;
+long timeDelta = 0;
+bool needsReset;
+
+void resetBase()
+{
+  float servoCurrent = base.read();  
+  float distance = servoCurrent - baseDefault;
+  while(abs(distance) > 10.0f)
+  {
+    base.write(servoCurrent + (distance > 0) ? -1 : 1);  
+    servoCurrent = base.read();    
+    distance = servoCurrent - baseDefault;  
+  }
+  
+  
+  /*long now = millis();
+  timeDelta = now - previous;
+  previous = now;
+
+  float servoCurrent = base.read();
+  float distance = baseDefault - servoCurrent;
+  if (distance < 1.0f)
+  {
+    needsReset = false;
+    return;
+  }
+  else
+  {
+    // How far to travel this loop
+    float distThisDelta = (timeDelta / 1000) * aspeed;
+    base.write(servoCurrent + distThisDelta);
+  }
+  */
+}
+
 void setup() {
 
   Serial.begin(9600);
@@ -25,17 +64,16 @@ void setup() {
   wristX.write(90);
   
   elbow.attach(6);
-  elbow.write(100); 
+  elbow.write(90); 
 
   shoulder1.attach(9);
-  shoulder1.write(110); 
-
+  shoulder1.write(110);
+   
   base.attach(10);
-  base.write(138);
-
+  base.write(baseDefault);
 }
 
-void loop() {  
+void loop() {    
   if (Serial.available() > 0)
   {
     int c = Serial.read();
@@ -70,6 +108,10 @@ void loop() {
       float angle = Serial.parseFloat();
       base.write(angle);
     }
-    
+    if (c == 'R')
+    {
+      base.write(baseDefault);
+      //resetBase();
+    }
   }
 }
