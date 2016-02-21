@@ -12,65 +12,41 @@ Servo base;  // create servo object to control a servo
 int pos = 0;    // variable to store the servo position
 
 float aspeed = 10.0f;
+
 float baseDefault = 100.0f;
+float gripDefault = 0.0f;
+float wristZDefault = 110.0f;
+float wristXDefault = 90.0f;
+float elbowDefault= 90.0f;
+float shoulderDefault = 110.0f;
+
 
 long previous = 0;
 long timeDelta = 0;
 bool needsReset;
 
-void resetBase()
-{
-  float servoCurrent = base.read();  
-  float distance = servoCurrent - baseDefault;
-  while(abs(distance) > 10.0f)
-  {
-    base.write(servoCurrent + (distance > 0) ? -1 : 1);  
-    servoCurrent = base.read();    
-    distance = servoCurrent - baseDefault;  
-  }
-  
-  
-  /*long now = millis();
-  timeDelta = now - previous;
-  previous = now;
 
-  float servoCurrent = base.read();
-  float distance = baseDefault - servoCurrent;
-  if (distance < 1.0f)
-  {
-    needsReset = false;
-    return;
-  }
-  else
-  {
-    // How far to travel this loop
-    float distThisDelta = (timeDelta / 1000) * aspeed;
-    base.write(servoCurrent + distThisDelta);
-  }
-  */
+void reset()
+{
+  grip.write(gripDefault);
+  wristX.write(wristXDefault);
+  wristZ.write(wristZDefault);
+  elbow.write(elbowDefault);
+  shoulder1.write(shoulderDefault);
+  base.write(baseDefault);
 }
 
 void setup() {
 
   Serial.begin(9600);
 
-  grip.attach(3);
-  grip.write(0); 
-                                                                                         
-  wristZ.attach(5);
-  wristZ.write(110); 
-  
-  wristX.attach(11);
-  wristX.write(90);
-  
+  grip.attach(3);                                                                                         
+  wristZ.attach(5);  
+  wristX.attach(11);  
   elbow.attach(6);
-  elbow.write(90); 
-
-  shoulder1.attach(9);
-  shoulder1.write(110);
-   
+  shoulder1.attach(9);   
   base.attach(10);
-  base.write(baseDefault);
+  reset();
 }
 
 void loop() {    
@@ -110,11 +86,8 @@ void loop() {
     }
     if (c == 'R')
     {
-      base.write(baseDefault);
-      wristZ.write(110); 
-      wristX.write(90);
-  
-      //resetBase();
+      base.write(baseDefault);      
+      reset();
     }
   }
 }

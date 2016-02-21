@@ -19,7 +19,7 @@ void setup() {
   size(600,600);
   arduino = new Serial(this, Serial.list()[0], 9600);
   
-  joints.put("G", new Joint("G", 0, 60, 0, 1, 0, 60, 0));
+  joints.put("G", new Joint("G", 0, 60, 0, 10, 100, 60, 0));
   joints.put("W", new Joint("W", 17, 185, 110, 1.0f, -1.0f, 17, 185));
   
   
@@ -152,8 +152,8 @@ void draw()
         needsReset = true;
         getHandInfo(frame);
         float thumbIndexGap = PVector.dist(thumbPos, indexPos);
-        
-        joints.get("G").track(pinchStrength);
+        println(thumbIndexGap);
+        joints.get("G").track(thumbIndexGap);
         joints.get("W").track(ypr[2]);
         joints.get("B").track(palmPos.x);
         joints.get("S").track(palmPos.z);
