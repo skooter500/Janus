@@ -4,7 +4,7 @@
 
 import controlP5.*;
 import processing.serial.*;
- 
+
 ControlP5 cp5;
 Serial arduino;
 
@@ -23,11 +23,11 @@ void setup() {
   joints.put("W", new Joint("W", 41, 1.0f, -1.0f, 0, 180));
   
   
-  joints.put("E", new Joint("E", 20, 150, 500, 40, 120));  
-  joints.put("S", new Joint("S", 0, 130, -50, 80, 130));
+  joints.put("E", new Joint("E", 90,150, 500, 0, 180));
+  joints.put("S", new Joint("S", 0, 130, -50, 0, 180));
   
-  joints.put("B", new Joint("B", 10 , -150, 150, 180, 10));
-  joints.put("X", new Joint("X", 0,  -1.5f, 0.4f, 50, 150));
+  joints.put("B", new Joint("B", 10 , -150, 150, 0, 180));
+  joints.put("X", new Joint("X", 0,  -1.5f, 0.4f, 0, 180));
   cp5 = new ControlP5(this);  
   int i = 0;
   for (String key: joints.keySet())

@@ -16,7 +16,7 @@ float aspeed = 10.0f;
 float baseDefault = 100.0f;
 float gripDefault = 0.0f;
 float wristZDefault = 41.0f;
-float wristXDefault = 90.0f;
+float wristXDefault = 141.0f;
 float elbowDefault= 90.0f;
 float shoulderDefault = 110.0f;
 
