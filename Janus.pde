@@ -1,6 +1,6 @@
-import com.leapmotion.leap.Controller;
-import com.leapmotion.leap.*;
-import com.leapmotion.leap.processing.LeapMotion;
+//import com.leapmotion.leap.Controller;
+//import com.leapmotion.leap.*;
+//import com.leapmotion.leap.processing.LeapMotion;
 
 import controlP5.*;
 import processing.serial.*;
@@ -8,7 +8,7 @@ import processing.serial.*;
 ControlP5 cp5;
 Serial arduino;
 
-LeapMotion leap;
+// LeapMotion leap;
 
 float[] ypr = new float[3];
 
@@ -19,24 +19,29 @@ void setup() {
   size(600,600);
   arduino = new Serial(this, Serial.list()[0], 9600);
   
-  joints.put("G", new Joint("G", 0, 60, 0, 10, 100, 60, 0));
-  joints.put("W", new Joint("W", 17, 185, 110, 1.0f, -1.0f, 17, 185));
+  joints.put("G", new Joint("G", 0, 10, 100, 0, 65));
+  joints.put("W", new Joint("W", 41, 1.0f, -1.0f, 0, 180));
   
   
-  joints.put("E", new Joint("E", 20, 120, 60, 150, 500, 40, 120));  
-  joints.put("S", new Joint("S", 0, 130, 80, 130, -50, 80, 130));
+  joints.put("E", new Joint("E", 20, 150, 500, 40, 120));  
+  joints.put("S", new Joint("S", 0, 130, -50, 80, 130));
   
-  joints.put("B", new Joint("B", 10, 180, 100, -150, 150, 180, 10));
-  joints.put("X", new Joint("X", 0, 150, 90, -1.5f, 0.4f, 50, 150));
+  joints.put("B", new Joint("B", 10 , -150, 150, 180, 10));
+  joints.put("X", new Joint("X", 0,  -1.5f, 0.4f, 50, 150));
   cp5 = new ControlP5(this);  
   int i = 0;
   for (String key: joints.keySet())
   {
     Joint j = joints.get(key);    
-    cp5.addSlider(j.id, j.idle, j.inputLow, j.inputHigh, 10, 10 + (50 * (i ++)), width - 50, 40);
+    cp5.addSlider(j.id)
+      .setPosition(10, 10 + (50 * (i ++)))
+        .setSize(570, 40)
+        .setRange(j.servoLow,j.servoHigh)
+        .setValue(j.idle);
+   
   }
   
-  leap = new LeapMotion(this);
+  //leap = new LeapMotion(this);
   
   camera = new Camera();
 }
@@ -48,6 +53,7 @@ PVector palmPos = new PVector();
 
 float pinchStrength = 0;
 
+/*
 void getHandInfo(Frame frame)
 {
   Hand hand = frame.hands().rightmost();
@@ -84,6 +90,7 @@ void getHandInfo(Frame frame)
     ypr[2] = hand.palmNormal().roll();
   }
 }
+*/
 
 void drawDirections(float[] directions)
 {  
@@ -121,6 +128,7 @@ void draw()
   noFill();
   camera.update();    
   
+  /*
   Controller controller = leap.controller();
   if (controller.isConnected())
   {     
@@ -160,15 +168,14 @@ void draw()
         joints.get("E").track(palmPos.y);
         joints.get("X").track(ypr[1]);               
         
-        /*handDir.mult(100);
-        line(0, 0, 0, handDir.x, handDir.y, handDir.z); 
-        pushMatrix();
-        translate(thumbPos.x, thumbPos.y, thumbPos.z);
-        sphere(5);
-        popMatrix();
-        */
+        //handDir.mult(100);
+        //line(0, 0, 0, handDir.x, handDir.y, handDir.z); 
+        //pushMatrix();
+        //translate(thumbPos.x, thumbPos.y, thumbPos.z);
+        //sphere(5);
+        //popMatrix();
+        
      }
-     
      if (! tracked && needsReset)
      {       
        if (needsReset)
@@ -180,6 +187,8 @@ void draw()
      
      drawDirections(ypr);
    }
+   */   
+    
    
   if (arduino.available() > 0)
   {
